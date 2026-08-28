@@ -117,6 +117,6 @@ class ValoracionController extends Controller
             'area_idarea' => $request->area,
         ]);
 
-        return back()->with('success', 'Profesional registrado correctamente.');
+        return back()->with('success', 'Profesional registrado correcto.');
     }
 }
