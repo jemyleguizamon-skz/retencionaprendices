@@ -70,7 +70,7 @@
                     <a href="{{ route('aprendices.create') }}" class="btn btn-success fw-bold rounded-pill px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
                         <i class="bi bi-person-plus-fill"></i> Crear Aprendiz
                     </a>
-                </div
+                </div>
             </div>
         </div>
 
