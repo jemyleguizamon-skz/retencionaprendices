@@ -36,8 +36,8 @@
                 </ul>
                 
                 <div class="d-flex align-items-center gap-3">
-                    <a href="#" class="btn btn-light btn-sm fw-bold text-success d-flex align-items-center gap-2 shadow-sm rounded-pill px-3 py-2">
-                        <i class="bi bi-file-earmark-pdf-fill text-danger"></i> Generar Reporte
+                    <a href="{{ route('instructor.reporte.pdf') }}" class="btn btn-danger fw-bold rounded-pill px-4 shadow-sm">
+                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Exportar Reporte PDF
                     </a>
                     
                     <form class="d-flex" role="search" action="#" method="GET">

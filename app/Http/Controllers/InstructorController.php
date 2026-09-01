@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InstructorController extends Controller
 {
@@ -85,4 +86,31 @@ class InstructorController extends Controller
     public function edit(string $id) {}
     public function update(Request $request, string $id) {}
     public function destroy(string $id) {}
+
+    public function generarReporteAprendices()
+{
+    $usuarioActual = Auth::user();
+
+    // 1. Obtener el idInstructor del usuario actual
+    $instructor = DB::table('instructor')
+        ->where('documento', $usuarioActual->documento)
+        ->first();
+
+    $idInstructor = $instructor ? $instructor->idInstructor : null;
+
+    // 2. Consultar los aprendices asignados a este instructor
+    $aprendices = DB::table('programa_ficha as pf')
+        ->join('aprendiz as a', 'pf.idAprendiz', '=', 'a.idAprendiz')
+        ->join('riesgoacademico as ra', 'pf.idprograma_ficha', '=', 'ra.idprograma_ficha')
+        ->where('ra.idInstructor', $idInstructor)
+        ->select('a.nombre', 'a.apellido', 'pf.ficha', 'ra.fecha_activacion')
+        ->distinct()
+        ->get();
+
+    // 3. Generar el PDF enviando la variable $aprendices
+    $pdf = Pdf::loadView('Instructor.reporte_pdf', compact('aprendices'));
+
+    return $pdf->download('reporte_aprendices_' . date('Ymd') . '.pdf');
 }
+
+    }

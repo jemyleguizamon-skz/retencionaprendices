@@ -64,6 +64,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/instructor/aprendices/crear', [InstructorController::class, 'create'])->name('aprendices.create');
         Route::post('/instructor/aprendices/guardar', [InstructorController::class, 'store'])->name('aprendices.store');
     });
+    Route::get('/instructor/reporte-pdf', [InstructorController::class, 'generarReporteAprendices'])
+    ->name('instructor.reporte.pdf');
 
     // Panel Comité Académico
     Route::middleware('rol:comite')->group(function () {
