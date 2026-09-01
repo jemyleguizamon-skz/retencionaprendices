@@ -73,8 +73,11 @@ Route::middleware(['auth'])->group(function () {
     // Acciones de Valoración
     Route::post('/valoracion/historial', [ValoracionController::class, 'storeHistorial'])->name('valoracion.historial.store');
     Route::post('/valoracion/profesional', [ValoracionController::class, 'storeProfesional'])->name('valoracion.profesional.store');
-    Route::get('/valoracion/historial-tabla', [ValoracionController::class, 'index'])->name('valoracion.historial.index');
 
+    // Redirección directa o alias para ver el historial
+    Route::get('/valoracion/historial-tabla', function () {
+        return redirect()->route('comite.inicio');
+    })->name('valoracion.historial.index');
 });
 
 require __DIR__.'/auth.php';

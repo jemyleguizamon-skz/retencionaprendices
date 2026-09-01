@@ -59,7 +59,7 @@
                 <p class="text-secondary mb-0">Registra y realiza el seguimiento a los aprendices en el área de bienestar institucional.</p>
             </div>
             <div>
-                <a href="{{ route('valoracion.historial.index') }}" class="btn btn-light fw-bold px-4 py-2 shadow-sm text-dark">
+                <a href="{{ route('comite.inicio') }}" class="btn btn-light fw-bold px-4 py-2 shadow-sm text-dark">
                     <i class="bi bi-table me-2 text-success"></i> Ver Mis Valoraciones
                 </a>
             </div>
