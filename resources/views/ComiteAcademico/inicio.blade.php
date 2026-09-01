@@ -15,7 +15,8 @@
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2 fs-4" href="#">
                 <i class="bi bi-shield-check"></i> SPRAS
             </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <button class="navbar-tog
+            gler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
             

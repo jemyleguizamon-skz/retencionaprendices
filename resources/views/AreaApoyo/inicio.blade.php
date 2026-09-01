@@ -45,13 +45,6 @@
             </div>
         @endif
 
-        @if($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ $errors->first() }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-
         <!-- Banner de Bienvenida -->
         <div class="bg-dark text-white rounded-3 p-4 mb-4 shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
@@ -79,7 +72,7 @@
                     </div>
 
                     <div class="card-body p-4 p-md-5">
-                        <form action="{{ route('valoracion.historial.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('valoracion.historial.store') }}" method="POST">
                             @csrf
 
                             <!-- Nombre Aprendiz -->
@@ -98,7 +91,7 @@
                                     <select class="form-select" name="ficha" required>
                                         <option value="">-- Seleccione la Ficha --</option>
                                         @foreach ($fichas as $ficha)
-                                            <option value="{{ $ficha->ficha }}">Ficha: {{ $ficha->ficha }}</option>
+                                            <option value="{{ $ficha->idprograma_ficha }}">Ficha: {{ $ficha->ficha }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -136,14 +129,16 @@
                                 </div>
                             </div>
 
-                            <!-- Archivo de Seguimiento -->
+                            <!-- Descripción Breve -->
                             <div class="mb-4">
-                                <label class="form-label fw-bold">Adjuntar Archivo de Seguimiento del Aprendiz</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-file-earmark-arrow-up"></i></span>
-                                    <input type="file" class="form-control" name="archivo_seguimiento" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
-                                </div>
-                                <div class="form-text">Formatos permitidos: PDF, Word (DOC/DOCX) o Imágenes (PNG/JPG).</div>
+                                <label class="form-label fw-bold">Descripción de la Situación</label>
+                                <textarea class="form-control" name="descripcion_breve" rows="3" placeholder="Describa brevemente la situación o motivo de la consulta..." required>{{ old('descripcion_breve') }}</textarea>
+                            </div>
+
+                            <!-- Nota Adicional -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Notas Adicionales / Observaciones</label>
+                                <input type="text" class="form-control" name="nota" placeholder="Ej: Primera sesión de acompañamiento" value="{{ old('nota') }}" required>
                             </div>
 
                             <!-- Botón de Envío -->

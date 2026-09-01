@@ -58,14 +58,19 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="bg-white p-4 rounded-4 shadow-sm border d-flex align-items-center justify-content-between flex-wrap gap-3">
-                    <div>
-                        <h4 class="fw-bold mb-1 text-dark">¡Hola de nuevo, {{ auth()->user()->name }}! 👋</h4>
-                        <p class="text-muted mb-0 small">Sistema para la Prevención y Retención del Aprendiz SENA.</p>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-success-subtle text-success p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                            <i class="bi bi-hand-index-thumb-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-1 text-dark">¡Hola de nuevo, {{ Auth::user()->name }}!</h4>
+                            <p class="text-muted mb-0 small">Sistema para la Prevención y Retención del Aprendiz SENA.</p>
+                        </div>
                     </div>
                     <a href="{{ route('aprendices.create') }}" class="btn btn-success fw-bold rounded-pill px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
                         <i class="bi bi-person-plus-fill"></i> Crear Aprendiz
                     </a>
-                </div>
+                </div
             </div>
         </div>
 
