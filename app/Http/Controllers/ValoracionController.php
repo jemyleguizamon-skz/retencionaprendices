@@ -128,4 +128,67 @@ class ValoracionController extends Controller
 
         return view('AreaApoyo.historial', compact('valoraciones'));
     }
+
+    public function edit($id)
+    {
+        // Buscar el registro de acompañamiento por su llave primaria
+        $valoracion = DB::table('procesoaconmpaniamento')->where('idProcesoaconmpaniamento', $id)->first();
+
+        if (!$valoracion) {
+            return redirect()->route('valoracion.historial.index')->with('error', 'Registro no encontrado.');
+        }
+
+        $fichas = DB::table('programa_ficha')
+                    ->select('ficha')
+                    ->distinct()
+                    ->orderBy('ficha', 'asc')
+                    ->get();
+
+        $areas = DB::table('area')
+                    ->select('idarea', 'nombre')
+                    ->get();
+
+        $apoyos = DB::table('apoyoinstitucional')->get();
+
+        return view('AreaApoyo.editar', compact('valoracion', 'fichas', 'areas', 'apoyos'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nombre_aprendiz'      => 'required|string',
+            'ficha'                => 'required',
+            'nombre_area'          => 'required',
+            'idapoyoinstitucional' => 'required',
+            'fecha_inicio'         => 'required|date',
+            'archivo_seguimiento'  => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
+        ]);
+
+        $valoracion = DB::table('procesoaconmpaniamento')->where('idProcesoaconmpaniamento', $id)->first();
+
+        if (!$valoracion) {
+            return redirect()->route('valoracion.historial.index')->with('error', 'Registro no encontrado.');
+        }
+
+        $rutaArchivo = $valoracion->archivo;
+
+        // Si se sube un nuevo archivo, actualizar la ruta
+        if ($request->hasFile('archivo_seguimiento')) {
+            $rutaArchivo = $request->file('archivo_seguimiento')->store('seguimientos', 'public');
+        }
+
+        DB::table('procesoaconmpaniamento')
+            ->where('idProcesoaconmpaniamento', $id)
+            ->update([
+                'nombre_aprendiz'      => $request->nombre_aprendiz,
+                'ficha'                => $request->ficha,
+                'idarea'               => $request->nombre_area,
+                'idapoyoinstitucional' => $request->idapoyoinstitucional,
+                'fecha_inicio'         => $request->fecha_inicio,
+                'fecha_fin'            => $request->fecha_inicio,
+                'archivo'              => $rutaArchivo,
+            ]);
+
+        return redirect()->route('valoracion.historial.index')->with('success', 'Valoración actualizada exitosamente.');
+    }
 }

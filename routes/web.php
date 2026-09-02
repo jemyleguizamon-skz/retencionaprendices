@@ -80,9 +80,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/area-apoyo/mis-valoraciones', [ValoracionController::class, 'indexHistorial'])
         ->name('valoracion.historial.index');
 
-    //para ver la lsita de reistros de los arprendices
-    Route::get('/instructor/registros', [ComiteAcademicoController::class, 'registrosInstructor'])->name('instructor.registros');
+    // Rutas para Editar Valoración
+    Route::get('/area-apoyo/valoracion/{id}/edit', [ValoracionController::class, 'edit'])->name('valoracion.edit');
+    Route::put('/area-apoyo/valoracion/{id}', [ValoracionController::class, 'update'])->name('valoracion.update');
 
+    // Para ver la lista de registros de los aprendices
+    Route::get('/instructor/registros', [ComiteAcademicoController::class, 'registrosInstructor'])->name('instructor.registros');
 
 });
 

@@ -55,6 +55,7 @@
                                 <th>Apoyo Institucional</th>
                                 <th>Fecha Atención</th>
                                 <th>Seguimiento (Archivo)</th>
+                                <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -74,10 +75,15 @@
                                             <span class="text-muted small">Sin archivo</span>
                                         @endif
                                     </td>
+                                    <td class="text-center">
+                                        <a href="{{ route('valoracion.edit', $val->idProcesoaconmpaniamento) }}" class="btn btn-sm btn-primary" title="Editar valoración">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </a>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">
+                                    <td colspan="7" class="text-center text-muted py-4">
                                         No se encontraron registros coincidentes.
                                     </td>
                                 </tr>
