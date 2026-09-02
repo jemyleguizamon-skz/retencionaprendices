@@ -101,7 +101,8 @@
                                         <th class="ps-4 py-3">Aprendiz</th>
                                         <th class="py-3">Apellido</th>
                                         <th class="py-3">Archivo Adjunto</th>
-                                        <th class="pe-4 py-3">Ficha / Programa</th>
+                                        <th class="py-3">Ficha / Programa</th>
+                                        <th class="pe-4 py-3 text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -117,7 +118,6 @@
                                             </td>
                                             <td class="text-secondary">{{ $aprendiz->apellido }}</td>
                                             
-                                            <!-- Columna ajustada para mostrar boton de ver/descargar archivo -->
                                             <td class="fw-bold text-secondary">
                                                 @if (!empty($aprendiz->archivo))
                                                     <a href="{{ asset('storage/' . $aprendiz->archivo) }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3 d-inline-flex align-items-center gap-1">
@@ -128,15 +128,22 @@
                                                 @endif
                                             </td>
 
-                                            <td class="pe-4">
+                                            <td>
                                                 <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-3">
                                                     <i class="bi bi-hash"></i>{{ $aprendiz->ficha }}
                                                 </span>
                                             </td>
+
+                                            <!-- Botón de Editar -->
+                                            <td class="pe-4 text-center">
+                                                <a href="{{ route('aprendices.edit', $aprendiz->idAprendiz) }}" class="btn btn-sm btn-outline-warning rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1 shadow-sm">
+                                                    <i class="bi bi-pencil-square"></i> Editar
+                                                </a>
+                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="text-center text-muted py-5">
+                                            <td colspan="5" class="text-center text-muted py-5">
                                                 <i class="bi bi-people display-6 d-block mb-2 text-secondary opacity-50"></i>
                                                 No tienes aprendices asignados actualmente.
                                             </td>
@@ -153,8 +160,6 @@
             <div class="col-lg-4 col-xl-3 mb-4">
                 <div class="card border-0 rounded-4 shadow-sm bg-white text-center p-3">
                     <div class="card-body">
-                        
-                        <!-- Avatar con icono por defecto -->
                         <div class="mx-auto bg-light text-success rounded-circle d-flex align-items-center justify-content-center shadow-sm border border-2 border-white mb-3" style="width: 80px; height: 80px; font-size: 2.2rem;">
                             <i class="bi bi-person-badge"></i>
                         </div>
@@ -178,7 +183,6 @@
                                 </button>
                             </form>
                         </div>
-
                     </div>
                 </div>
             </div>

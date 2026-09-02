@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class InstructorController extends Controller
@@ -24,7 +25,7 @@ class InstructorController extends Controller
         $idInstructor = $instructor ? $instructor->idInstructor : null;
         $buscar = $request->get('buscar');
 
-        // Consultar aprendices asociados incluyendo archivo y filtro de búsqueda
+        // Consultar aprendices asociados incluyendo idAprendiz, archivo y filtro de búsqueda
         $aprendices = DB::table('programa_ficha as pf')
             ->join('aprendiz as a', 'pf.idAprendiz', '=', 'a.idAprendiz')
             ->join('riesgoacademico as ra', 'pf.idprograma_ficha', '=', 'ra.idprograma_ficha')
@@ -37,7 +38,7 @@ class InstructorController extends Controller
                       ->orWhere('pf.ficha', 'LIKE', "%{$buscar}%");
                 });
             })
-            ->select('a.archivo', 'a.nombre', 'a.apellido', 'pf.ficha')
+            ->select('a.idAprendiz', 'a.archivo', 'a.nombre', 'a.apellido', 'pf.ficha')
             ->distinct()
             ->get();
 
@@ -66,13 +67,12 @@ class InstructorController extends Controller
             'nombre'        => 'required|string|max:255',
             'apellido'      => 'required|string|max:255',
             'ficha'         => 'required|string|max:50',
-            'archivo'       => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:5120', // Admite archivos de hasta 5MB
+            'archivo'       => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:5120', // Hasta 5MB
         ]);
 
         DB::transaction(function () use ($request) {
             $rutaArchivo = null;
 
-            // Procesar y guardar el archivo si fue enviado
             if ($request->hasFile('archivo')) {
                 $rutaArchivo = $request->file('archivo')->store('archivos', 'public');
             }
@@ -100,8 +100,69 @@ class InstructorController extends Controller
     }
 
     public function show(string $id) {}
-    public function edit(string $id) {}
-    public function update(Request $request, string $id) {}
+
+    /**
+     * Muestra el formulario para editar los datos de un aprendiz.
+     */
+    public function edit(string $id)
+    {
+        $aprendiz = DB::table('aprendiz as a')
+            ->join('programa_ficha as pf', 'a.idAprendiz', '=', 'pf.idAprendiz')
+            ->where('a.idAprendiz', $id)
+            ->select('a.*', 'pf.ficha', 'pf.programa_formacion_idPrograma_formacion as id_programa')
+            ->first();
+
+        if (!$aprendiz) {
+            return redirect()->route('instructor.inicio')->with('error', 'Aprendiz no encontrado.');
+        }
+
+        $programas = DB::table('programa_formacion')->get();
+
+        return view('Instructor.editaraprendiz', compact('aprendiz', 'programas'));
+    }
+
+    /**
+     * Actualiza la información del aprendiz y reemplaza el archivo en caso de adjuntar uno nuevo.
+     */
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'nombre'      => 'required|string|max:255',
+            'apellido'    => 'required|string|max:255',
+            'id_programa' => 'required|exists:programa_formacion,idPrograma_formacion',
+            'ficha'       => 'required|string|max:50',
+            'archivo'     => 'nullable|file|mimes:pdf,doc,docx,jpg,png|max:5120',
+        ]);
+
+        DB::transaction(function () use ($request, $id) {
+            $aprendizActual = DB::table('aprendiz')->where('idAprendiz', $id)->first();
+            $rutaArchivo = $aprendizActual->archivo;
+
+            if ($request->hasFile('archivo')) {
+                // Elimina el archivo anterior del disco público si existe
+                if ($rutaArchivo && Storage::disk('public')->exists($rutaArchivo)) {
+                    Storage::disk('public')->delete($rutaArchivo);
+                }
+                $rutaArchivo = $request->file('archivo')->store('archivos', 'public');
+            }
+
+            // Actualiza datos de la tabla aprendiz
+            DB::table('aprendiz')->where('idAprendiz', $id)->update([
+                'nombre'   => $request->nombre,
+                'apellido' => $request->apellido,
+                'archivo'  => $rutaArchivo,
+            ]);
+
+            // Actualiza ficha y programa
+            DB::table('programa_ficha')->where('idAprendiz', $id)->update([
+                'programa_formacion_idPrograma_formacion' => $request->id_programa,
+                'ficha'                                    => $request->ficha,
+            ]);
+        });
+
+        return redirect()->route('instructor.inicio')->with('success', 'Aprendiz actualizado correctamente.');
+    }
+
     public function destroy(string $id) {}
 
     /**

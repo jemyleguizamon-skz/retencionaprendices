@@ -63,9 +63,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/instructor/inicio', [InstructorController::class, 'index'])->name('instructor.inicio');
         Route::get('/instructor/aprendices/crear', [InstructorController::class, 'create'])->name('aprendices.create');
         Route::post('/instructor/aprendices/guardar', [InstructorController::class, 'store'])->name('aprendices.store');
+        
+        // Rutas para Editar y Actualizar Aprendices
+        Route::get('/instructor/aprendices/{id}/editar', [InstructorController::class, 'edit'])->name('aprendices.edit');
+        Route::put('/instructor/aprendices/{id}', [InstructorController::class, 'update'])->name('aprendices.update');
     });
+
     Route::get('/instructor/reporte-pdf', [InstructorController::class, 'generarReporteAprendices'])
-    ->name('instructor.reporte.pdf');
+        ->name('instructor.reporte.pdf');
 
     // Panel Comité Académico
     Route::middleware('rol:comite')->group(function () {
