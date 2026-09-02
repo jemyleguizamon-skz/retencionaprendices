@@ -31,4 +31,6 @@ class ComiteAcademicoController extends Controller
 
         return view('ComiteAcademico.inicio', compact('seguimientos'));
     }
+
+
 }

@@ -64,9 +64,13 @@
                 <span class="d-flex align-items-center gap-2 fs-5">
                     <i class="bi bi-people-fill"></i> Seguimiento General de Aprendices Remitidos
                 </span>
-                <a href="{{ route('login') }}" class="btn btn-sm btn-light text-success fw-bold rounded-pill px-3 py-2 d-inline-flex align-items-center gap-1 shadow-sm">
-                    <i class="bi bi-arrow-left"></i> Volver a Registro
-                </a>
+                <div class="d-flex gap-2">
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('login') }}" class="btn btn-sm btn-light text-success fw-bold rounded-pill px-3 py-2 d-inline-flex align-items-center gap-1 shadow-sm">
+                            <i class="bi bi-arrow-left"></i> Volver a Registro
+                        </a>
+                    </div>
+                </div>
             </div>
             
             <!-- Tabla de Datos -->

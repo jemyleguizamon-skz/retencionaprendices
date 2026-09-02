@@ -79,6 +79,11 @@ Route::middleware(['auth'])->group(function () {
     // Única y correcta ruta para ver el historial del área de apoyo
     Route::get('/area-apoyo/mis-valoraciones', [ValoracionController::class, 'indexHistorial'])
         ->name('valoracion.historial.index');
+
+    //para ver la lsita de reistros de los arprendices
+    Route::get('/instructor/registros', [ComiteAcademicoController::class, 'registrosInstructor'])->name('instructor.registros');
+
+
 });
 
 require __DIR__.'/auth.php';
