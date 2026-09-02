@@ -14,7 +14,7 @@
             <div class="col-lg-8 col-md-10">
 
                 <div class="mb-3">
-                    <a href="{{ route('login') }}" class="btn btn-light border text-secondary fw-semibold rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2 shadow-sm">
+                    <a href="{{ route('instructor.inicio') }}" class="btn btn-light border text-secondary fw-semibold rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2 shadow-sm">
                         <i class="bi bi-arrow-left"></i> Volver al Panel
                     </a>
                 </div>
@@ -55,7 +55,8 @@
                     </div>
 
                     <div class="card-body p-4 p-md-5">
-                        <form action="{{ route('aprendices.store') }}" method="POST">
+                        <!-- Se añade enctype="multipart/form-data" para permitir subida de archivos -->
+                        <form action="{{ route('aprendices.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row g-3">
                                 
@@ -105,11 +106,20 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12">
+                                <div class="col-md-6">
                                     <label for="ficha" class="form-label fw-semibold text-dark small">Número de Ficha</label>
                                     <div class="input-group">
                                         <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-hash"></i></span>
                                         <input type="text" class="form-control border-start-0 ps-0 shadow-none" id="ficha" name="ficha" value="{{ old('ficha') }}" required placeholder="Ej. 2558912">
+                                    </div>
+                                </div>
+
+                                <!-- Campo nuevo para cargar el archivo adjunto -->
+                                <div class="col-md-6">
+                                    <label for="archivo" class="form-label fw-semibold text-dark small">Archivo / Documento Adjunto</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-file-earmark-arrow-up"></i></span>
+                                        <input type="file" class="form-control border-start-0 ps-0 shadow-none" id="archivo" name="archivo">
                                     </div>
                                 </div>
 

@@ -24,7 +24,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold">
                     <li class="nav-item">
-                        <a class="nav-link active d-flex align-items-center gap-1" href="{{ route('login') }}">
+                        <a class="nav-link active d-flex align-items-center gap-1" href="{{ route('instructor.inicio') }}">
                             <i class="bi bi-house-door-fill"></i> Inicio
                         </a>
                     </li>
@@ -35,15 +35,25 @@
                     </li>
                 </ul>
                 
-                <div class="d-flex align-items-center gap-3">
-                    <a href="{{ route('instructor.reporte.pdf') }}" class="btn btn-danger fw-bold rounded-pill px-4 shadow-sm">
-                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Exportar Reporte PDF
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Botón Exportar PDF -->
+                    <a href="{{ route('instructor.reporte.pdf', ['buscar' => request('buscar')]) }}" 
+                        class="btn btn-light btn-sm fw-bold rounded-pill px-3 shadow-sm d-flex align-items-center gap-1 text-success">
+                            <i class="bi bi-file-earmark-pdf-fill text-danger"></i> Exportar Reporte PDF
                     </a>
-                    
-                    <form class="d-flex" role="search" action="#" method="GET">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-0 text-muted"><i class="bi bi-search"></i></span>
-                            <input class="form-control border-0 shadow-none ps-0" type="search" placeholder="Buscar aprendiz..." style="width: 170px;">
+
+                    <!-- Input de Búsqueda dinámico -->
+                    <form method="GET" action="{{ route('instructor.inicio') }}" class="m-0">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" 
+                                name="buscar" 
+                                class="form-control border-start-0 rounded-end-pill pe-3" 
+                                placeholder="Buscar aprendiz..." 
+                                value="{{ request('buscar') }}"
+                                onchange="this.form.submit()">
                         </div>
                     </form>
                 </div>
@@ -90,8 +100,8 @@
                                     <tr>
                                         <th class="ps-4 py-3">Aprendiz</th>
                                         <th class="py-3">Apellido</th>
-                                        <th class="py-3">Ficha / Programa</th>
-                                        <th class="text-end pe-4 py-3">Acciones</th>
+                                        <th class="py-3">Archivo Adjunto</th>
+                                        <th class="pe-4 py-3">Ficha / Programa</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -106,13 +116,22 @@
                                                 </div>
                                             </td>
                                             <td class="text-secondary">{{ $aprendiz->apellido }}</td>
-                                            <td>
+                                            
+                                            <!-- Columna ajustada para mostrar boton de ver/descargar archivo -->
+                                            <td class="fw-bold text-secondary">
+                                                @if (!empty($aprendiz->archivo))
+                                                    <a href="{{ asset('storage/' . $aprendiz->archivo) }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3 d-inline-flex align-items-center gap-1">
+                                                        <i class="bi bi-file-earmark-arrow-down"></i> Ver Archivo
+                                                    </a>
+                                                @else
+                                                    <span class="badge bg-light text-muted border px-2 py-1">Sin Archivo</span>
+                                                @endif
+                                            </td>
+
+                                            <td class="pe-4">
                                                 <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-3">
                                                     <i class="bi bi-hash"></i>{{ $aprendiz->ficha }}
                                                 </span>
-                                            </td>
-                                            <td class="text-end pe-4">
-                                                <button class="btn btn-sm btn-light border text-secondary rounded-2"><i class="bi bi-three-dots-vertical"></i></button>
                                             </td>
                                         </tr>
                                     @empty
