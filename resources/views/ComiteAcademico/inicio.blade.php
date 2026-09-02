@@ -15,8 +15,7 @@
             <a class="navbar-brand fw-bold d-flex align-items-center gap-2 fs-4" href="#">
                 <i class="bi bi-shield-check"></i> SPRAS
             </a>
-            <button class="navbar-tog
-            gler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
@@ -39,10 +38,16 @@
                     </li>
                 </ul>
                 
-                <form class="d-flex" role="search" action="#" method="GET">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input class="form-control border-0 shadow-none ps-0" type="search" placeholder="Buscar aprendiz..." style="width: 170px;">
+                <!-- Formulario de Búsqueda Funcional -->
+                <form class="d-flex" role="search" action="{{ route('comite.inicio') }}" method="GET">
+                    <div class="input-group bg-white rounded overflow-hidden">
+                        <span class="input-group-text bg-white border-0 text-muted ps-2"><i class="bi bi-search"></i></span>
+                        <input class="form-control border-0 shadow-none ps-0" type="search" name="buscar" placeholder="Buscar aprendiz..." value="{{ request('buscar') }}" style="width: 170px;">
+                        @if(request('buscar'))
+                            <a href="{{ route('comite.inicio') }}" class="btn btn-link text-danger text-decoration-none d-flex align-items-center px-2" title="Limpiar">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        @endif
                     </div>
                 </form>
             </div>
@@ -74,8 +79,7 @@
                             <th class="py-3">Área de Apoyo</th>
                             <th class="py-3">Profesional</th> 
                             <th class="py-3">Fecha</th>
-                            <th class="py-3">Descripción</th>
-                            <th class="pe-4 py-3">Nota</th>
+                            <th class="pe-4 py-3">Seguimiento (Archivo)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -99,12 +103,19 @@
                                     {{ $fila->nombre_profesional ?? 'Sin Profesional Asignado' }}
                                 </td>
                                 <td class="text-secondary">{{ $fila->fecha_inicio }}</td>
-                                <td class="text-secondary">{{ $fila->descripcion_breve ?? 'Sin descripción' }}</td>
-                                <td class="pe-4 text-secondary">{{ $fila->nota ?? 'N/A' }}</td>
+                                <td class="pe-4">
+                                    @if(!empty($fila->archivo))
+                                        <a href="{{ asset('storage/' . $fila->archivo) }}" target="_blank" class="btn btn-sm btn-outline-success d-inline-flex align-items-center gap-1">
+                                            <i class="bi bi-file-earmark-arrow-down-fill"></i> Ver Documento
+                                        </a>
+                                    @else
+                                        <span class="text-muted small">Sin archivo</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-5">
+                                <td colspan="6" class="text-center text-muted py-5">
                                     <i class="bi bi-folder-x display-6 d-block mb-2 text-secondary opacity-50"></i>
                                     No se encontraron registros de seguimiento actualmente.
                                 </td>

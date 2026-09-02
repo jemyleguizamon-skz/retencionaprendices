@@ -7,18 +7,27 @@ use Illuminate\Support\Facades\DB;
 
 class ComiteAcademicoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        // Capturar lo que se escribió en la barra de búsqueda
+        $search = $request->input('buscar');
+
         // Consulta los acompañamientos trayendo los nombres reales mediante LEFT JOIN
-        $seguimientos = DB::table('procesoaconmpaniamento')
+        $query = DB::table('procesoaconmpaniamento')
             ->leftJoin('area', 'procesoaconmpaniamento.idarea', '=', 'area.idarea')
             ->leftJoin('profesionalcaso', 'procesoaconmpaniamento.idprofesionalcaso', '=', 'profesionalcaso.idprofesionalcaso')
             ->select(
                 'procesoaconmpaniamento.*',
                 'area.nombre as nombre_area',
                 'profesionalcaso.nombre as nombre_profesional'
-            )
-            ->get();
+            );
+
+        // Si hay texto en el buscador, filtrar por el nombre del aprendiz
+        if ($search) {
+            $query->where('procesoaconmpaniamento.nombre_aprendiz', 'LIKE', '%' . $search . '%');
+        }
+
+        $seguimientos = $query->get();
 
         return view('ComiteAcademico.inicio', compact('seguimientos'));
     }
