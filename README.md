@@ -54,6 +54,7 @@ El sistema administra de manera integral el ciclo de vida del riesgo académico 
 7. El sistema implementa una barra de búsqueda para filtrar valoraciones por el nombre del aprendiz mediante consultas directas a la base de datos .
 8. El sistema gestiona el almacenamiento y visualización de archivos adjuntos de seguimiento para cada valoración .
 9. El sistema permite la asignación de aprendices a programas de formación mediante el registro de fichas vinculadas al instructor .
+10. El sistema permite editar los aprendices que ya se encuentran registrados, tanto para el rol instructor y area de apoyo.
 
 ---
 
