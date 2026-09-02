@@ -45,6 +45,13 @@
             </div>
         @endif
 
+        @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm rounded-3 mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ $errors->first() }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         <!-- Banner de Bienvenida -->
         <div class="bg-dark text-white rounded-3 p-4 mb-4 shadow-sm d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
@@ -52,7 +59,7 @@
                 <p class="text-secondary mb-0">Registra y realiza el seguimiento a los aprendices en el área de bienestar institucional.</p>
             </div>
             <div>
-                <a href="{{ route('comite.inicio') }}" class="btn btn-light fw-bold px-4 py-2 shadow-sm text-dark">
+                <a href="{{ route('valoracion.historial.index') }}" class="btn btn-light fw-bold px-4 py-2 shadow-sm text-dark">
                     <i class="bi bi-table me-2 text-success"></i> Ver Mis Valoraciones
                 </a>
             </div>
@@ -72,7 +79,7 @@
                     </div>
 
                     <div class="card-body p-4 p-md-5">
-                        <form action="{{ route('valoracion.historial.store') }}" method="POST">
+                        <form action="{{ route('valoracion.historial.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             <!-- Nombre Aprendiz -->
@@ -91,7 +98,7 @@
                                     <select class="form-select" name="ficha" required>
                                         <option value="">-- Seleccione la Ficha --</option>
                                         @foreach ($fichas as $ficha)
-                                            <option value="{{ $ficha->idprograma_ficha }}">Ficha: {{ $ficha->ficha }}</option>
+                                            <option value="{{ $ficha->ficha }}">Ficha: {{ $ficha->ficha }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -116,7 +123,7 @@
                                         <option value="">-- Seleccione el Apoyo --</option>
                                         @foreach ($apoyos as $apoyo)
                                             <option value="{{ $apoyo->idapoyoinstitucional }}">
-                                                {{ $apoyo->nombre ?? $apoyo->nombre_apoyo ?? 'Apoyo Disponible' }}
+                                                {{ $apoyo->tipo ?? 'Apoyo Disponible' }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -129,16 +136,14 @@
                                 </div>
                             </div>
 
-                            <!-- Descripción Breve -->
+                            <!-- Archivo de Seguimiento -->
                             <div class="mb-4">
-                                <label class="form-label fw-bold">Descripción de la Situación</label>
-                                <textarea class="form-control" name="descripcion_breve" rows="3" placeholder="Describa brevemente la situación o motivo de la consulta..." required>{{ old('descripcion_breve') }}</textarea>
-                            </div>
-
-                            <!-- Nota Adicional -->
-                            <div class="mb-4">
-                                <label class="form-label fw-bold">Notas Adicionales / Observaciones</label>
-                                <input type="text" class="form-control" name="nota" placeholder="Ej: Primera sesión de acompañamiento" value="{{ old('nota') }}" required>
+                                <label class="form-label fw-bold">Adjuntar Archivo de Seguimiento del Aprendiz</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-file-earmark-arrow-up"></i></span>
+                                    <input type="file" class="form-control" name="archivo_seguimiento" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+                                </div>
+                                <div class="form-text">Formatos permitidos: PDF, Word (DOC/DOCX) o Imágenes (PNG/JPG).</div>
                             </div>
 
                             <!-- Botón de Envío -->

@@ -12,8 +12,9 @@ class ValoracionController extends Controller
     public function create()
     {
         $fichas = DB::table('programa_ficha')
-                    ->select('idprograma_ficha', 'ficha')
+                    ->select('ficha')
                     ->distinct()
+                    ->orderBy('ficha', 'asc')
                     ->get();
 
         $areas = DB::table('area')
@@ -31,79 +32,50 @@ class ValoracionController extends Controller
 
     public function storeHistorial(Request $request)
     {
-        // 1. Validar los datos del formulario
         $request->validate([
             'nombre_aprendiz'      => 'required|string',
             'ficha'                => 'required',
             'nombre_area'          => 'required',
             'idapoyoinstitucional' => 'required',
             'fecha_inicio'         => 'required|date',
-            'descripcion_breve'    => 'required|string',
-            'nota'                 => 'required|string',
+            'archivo_seguimiento'  => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240',
         ]);
 
-        // 2. Extraer nombre y apellido completo del usuario autenticado
+        // Obtener el ID del profesional logueado
         $nombreRealSesion = null;
-
         if (Auth::check()) {
             $user = Auth::user();
-
-            // Si existen campos separados de nombre y apellido en la BD/Model
             $primerNombre = $user->name ?? $user->nombre ?? $user->nombres ?? '';
             $apellido     = $user->lastname ?? $user->apellido ?? $user->apellidos ?? '';
-
-            $nombreCompleto = trim($primerNombre . ' ' . $apellido);
-
-            if (!empty($nombreCompleto)) {
-                $nombreRealSesion = $nombreCompleto;
-            } else {
-                $nombreRealSesion = $user->email ?? null;
-            }
+            $nombreRealSesion = trim($primerNombre . ' ' . $apellido);
         }
 
-        // Si la autenticación usa Session directamente
-        if (!$nombreRealSesion) {
-            $nombreSesion = session('nombre') ?? session('nombres') ?? session('user_name') ?? '';
-            $apellidoSesion = session('apellido') ?? session('apellidos') ?? '';
-            $nombreCompleto = trim($nombreSesion . ' ' . $apellidoSesion);
-
-            if (!empty($nombreCompleto)) {
-                $nombreRealSesion = $nombreCompleto;
-            }
-        }
-
-        // Si no se logra determinar la sesión, se le notifica al usuario
-        if (!$nombreRealSesion) {
-            return back()->withErrors(['error' => 'No se detectó un usuario autenticado. Inicie sesión nuevamente.']);
-        }
-
-        // 3. Buscar si el profesional ya existe con este nombre y apellido completo
         $profesional = DB::table('profesionalcaso')
             ->where('nombre', $nombreRealSesion)
             ->first();
 
-        if (!$profesional) {
-            $idProfesional = DB::table('profesionalcaso')->insertGetId([
-                'nombre'      => $nombreRealSesion,
-                'area_idarea' => $request->nombre_area
-            ]);
-        } else {
-            $idProfesional = $profesional->idprofesionalcaso;
+        $idProfesional = $profesional ? $profesional->idprofesionalcaso : 0;
+
+        // Manejar la subida del archivo si existe
+        $rutaArchivo = null;
+        if ($request->hasFile('archivo_seguimiento')) {
+            // Guarda el archivo en storage/app/public/seguimientos
+            $rutaArchivo = $request->file('archivo_seguimiento')->store('seguimientos', 'public');
         }
 
-        // 4. Inserción del registro de acompañamiento
+        // Insertar en la base de datos incluyendo la ruta del archivo y fecha_fin
         DB::table('procesoaconmpaniamento')->insert([
             'nombre_aprendiz'      => $request->nombre_aprendiz,
             'ficha'                => $request->ficha,
             'idarea'               => $request->nombre_area,
-            'idprofesionalcaso'    => $idProfesional,
             'idapoyoinstitucional' => $request->idapoyoinstitucional,
-            'idRiesgoacademico'    => 4,
             'fecha_inicio'         => $request->fecha_inicio,
             'fecha_fin'            => $request->fecha_inicio,
+            'idprofesionalcaso'    => $idProfesional,
+            'archivo'              => $rutaArchivo,
         ]);
 
-        return back()->with('success', 'Valoración guardada exitosamente.');
+        return redirect()->route('valoracion.historial.index')->with('success', 'Valoración guardada exitosamente.');
     }
 
     public function storeProfesional(Request $request)
@@ -119,5 +91,41 @@ class ValoracionController extends Controller
         ]);
 
         return back()->with('success', 'Profesional registrado correctamente.');
+    }
+
+    public function indexHistorial(Request $request)
+    {
+        $nombreRealSesion = null;
+
+        if (Auth::check()) {
+            $user = Auth::user();
+            $primerNombre = $user->name ?? $user->nombre ?? $user->nombres ?? '';
+            $apellido     = $user->lastname ?? $user->apellido ?? $user->apellidos ?? '';
+            $nombreRealSesion = trim($primerNombre . ' ' . $apellido);
+        }
+
+        $profesional = DB::table('profesionalcaso')
+            ->where('nombre', $nombreRealSesion)
+            ->first();
+
+        $idProfesional = $profesional ? $profesional->idprofesionalcaso : 0;
+
+        // Capturar lo que se escribió en el buscador
+        $search = $request->input('buscar');
+
+        $query = DB::table('procesoaconmpaniamento')
+            ->join('area', 'procesoaconmpaniamento.idarea', '=', 'area.idarea')
+            ->leftJoin('apoyoinstitucional', 'procesoaconmpaniamento.idapoyoinstitucional', '=', 'apoyoinstitucional.idapoyoinstitucional')
+            ->select('procesoaconmpaniamento.*', 'area.nombre as area_nombre', 'apoyoinstitucional.tipo as apoyo_nombre')
+            ->where('procesoaconmpaniamento.idprofesionalcaso', $idProfesional);
+
+        // Si hay texto en el buscador, aplicar el filtro de base de datos
+        if ($search) {
+            $query->where('procesoaconmpaniamento.nombre_aprendiz', 'LIKE', '%' . $search . '%');
+        }
+
+        $valoraciones = $query->get();
+
+        return view('AreaApoyo.historial', compact('valoraciones'));
     }
 }

@@ -69,17 +69,16 @@ Route::middleware(['auth'])->group(function () {
 
     // Panel Comité Académico
     Route::middleware('rol:comite')->group(function () {
-    Route::get('/comite-academico/seguimiento', [ComiteAcademicoController::class, 'index'])->name('comite.inicio');
+        Route::get('/comite-academico/seguimiento', [ComiteAcademicoController::class, 'index'])->name('comite.inicio');
     });
 
     // Acciones de Valoración
     Route::post('/valoracion/historial', [ValoracionController::class, 'storeHistorial'])->name('valoracion.historial.store');
     Route::post('/valoracion/profesional', [ValoracionController::class, 'storeProfesional'])->name('valoracion.profesional.store');
 
-    // Redirección directa o alias para ver el historial
-    Route::get('/valoracion/historial-tabla', function () {
-        return redirect()->route('comite.inicio');
-    })->name('valoracion.historial.index');
+    // Única y correcta ruta para ver el historial del área de apoyo
+    Route::get('/area-apoyo/mis-valoraciones', [ValoracionController::class, 'indexHistorial'])
+        ->name('valoracion.historial.index');
 });
 
 require __DIR__.'/auth.php';
